@@ -1,0 +1,35 @@
+﻿@model Movie
+@{
+    ViewData["Title"] = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/PeliculasPopulares.css" />
+</head>
+
+
+@foreach (Movie movie in Model.Movies)
+{
+    <div class="right">
+        <div class="container-fluid bg-trasparent my-2 p-2" style="position: center;">
+            <div class="row row-cols-1 row-cols-xs-2 row-cols-sm-2 row-cols-lg-4 g-3">
+                <div class="col" style="height: 28rem; width: 16rem">
+                    <div class="card h-100 shadow-sm" style="height:15rem">
+
+                        <img src=@movie.Imagen class="card-img-top" alt="..."> <div class="card-body">
+                            <div class="clearfix mb-3">
+                                <span class="float-start badge rounded-pill bg-primary">@movie.Titulo</span>
+                            </div>
+                            <h5 class="card-title">@movie.Descripcion</h5>
+                            <div class="text-center my-4">
+                                <a href="@Url.Action("AddFavoritos", "Movie", new {idPelicula = movie.idMovie, valFav = 1})" class="btn btn-success"> Quitar de Favoritos <i class="bi bi-cart3" style="color: khaki"></i> </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
