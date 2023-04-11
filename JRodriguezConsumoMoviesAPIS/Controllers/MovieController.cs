@@ -129,5 +129,39 @@ namespace JRodriguezConsumoMoviesAPIS.Controllers
             }
                 
         }
+
+        [HttpGet]
+        public ActionResult LoginUsuario()
+        {
+            return View();
+        }
+
+        [HttpPost]
+
+        public ActionResult LoginUsuario(ML.Usuario usuario)
+        {
+
+            ML.Result result = BL.Usuario.GetByUserName(usuario);
+
+            if (result.Correct)
+            {
+                ML.Usuario usuarioUnboxing = (ML.Usuario)result.Object;
+                if (usuario.Password == usuarioUnboxing.Password)
+                {
+                    return RedirectToAction("Index","Home");
+                }
+                else
+                {
+                    ViewBag.Message = "La contraseña es incorrecta";
+                    return PartialView("Modal");
+                }
+            }
+            else
+            {
+                ViewBag.Message = "El Nombre de Usuario es incorrecta o no existe";
+                return PartialView("Modal");
+            }
+        }
+
     }
 }

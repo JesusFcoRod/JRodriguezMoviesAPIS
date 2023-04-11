@@ -1,0 +1,154 @@
+﻿@model ML.Cine
+@{
+    ViewData["Title"] = "Form";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>CINES:</h1>
+
+</br>
+
+@using (Html.BeginForm("Form", "Cine", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-md-1" style="display: none;">
+            @Html.TextBoxFor(model => model.IdCine, new { @class = "hidden form-control", autocomplete = "off" })
+        </div>
+
+        <div class="col-md-2">
+            @Html.LabelFor(model => model.Latitud, "Latitud:")
+            <div class="input-group mb-2">
+                <span class="input-group-text"><i class="bi bi-controller"></i></span>
+                @Html.TextBoxFor(model => model.Latitud, new { @class = "form-control" , @id = "TxtLatitud"})
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            @Html.LabelFor(model => model.Longitud, "Longitud:")
+            <div class="input-group mb-2">
+                <span class="input-group-text"><i class="bi bi-controller"></i></span>
+                @Html.TextBoxFor(model => model.Longitud, new { @class = "form-control" , @id = "TxtLongitud"})
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            @Html.LabelFor(model => model.Descripcion, "Direccion:")
+            <div class="input-group mb-2">
+                <span class="input-group-text"><i class="bi bi-controller"></i></span>
+                @Html.TextBoxFor(model => model.Descripcion, new { @class = "form-control", @id = "TxtDireccion"})
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            @Html.LabelFor(model => model.Venta, "Venta:")
+            <div class="input-group mb-2">
+                <span class="input-group-text"><i class="bi bi-controller"></i></span>
+                @Html.TextBoxFor(model => model.Venta, new { @class = "form-control" , @id = "TxtVenta"})
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            @Html.LabelFor(model => model.Zona, "Zona: ")
+            <div class="input-group mb-2">
+                <span class="input-group-text"><i class="bi bi-controller"></i></span>
+                @Html.TextBoxFor(model => model.Zona, new { @class = "form-control"})
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div id="Map"></div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSKBDdPPlfca_zTwyxKiicRQn1qfgRjLw&callback=initMap&libraries=&y=weeky" defer></script>
+
+    <br />
+
+    <div class="row">
+        <div class="glyphicon-up">
+            <div class="form-group">
+                <div class="col-md-3">
+                    <input type="submit" value="Guardar" class="btn btn-success" />
+                    @Html.ActionLink("Regresar", "CinesGetAll", "Cine", htmlAttributes: new { @class = "btn btn-danger" })
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    #Map {
+        height: 450px;
+        width: 650px;
+    }
+</style>
+
+@section Scripts {
+
+    <script type="text/javascript">
+        function initMap() {
+
+            if ($("#TxtLatitud").val() == 0 && $("#TxtLongitud").val() == 0){
+                myLatlng = {lat: 19.5538408, lng: -99.2748958 };
+            }
+            else{
+                myLatlng = { lat: parseDecimal($("#TxtLatitud").val()), lng: parseDecimal($("#TxtLongitud").val()) } 
+            }
+
+            const map = new google.maps.Map(document.getElementById("Map"), {
+                zoom: 14,
+                center: myLatlng,
+
+            });
+
+            window.initMap = initMap;
+
+            //Ventana informativa dentro del mapa
+            let infoWindow = new google.maps.InfoWindow({
+                content: "Seleccione una ubicacion",
+                position: myLatlng,
+            });
+
+            infoWindow.open(map);//mostramos la ventana
+
+            //Funcion para obtener Direccion
+            google.maps.event.addListener(map, 'click', function (event){
+                var geocoder = new google.maps.Geocoder();
+
+                geocoder.geocode({
+                    'latLng': event.latLng
+                }, function (results, status){
+                    if(status == google.maps.GeocoderStatus.OK ){
+                        if(results[0]){
+                            $("#TxtDireccion").val(results[0].formatted_address);
+                        }
+                    }               
+                });
+            });
+
+            //Cordenadas
+            map.addListener("click", (mapsMouseEvent) => {
+                infoWindow.close();
+
+                infoWindow = new google.maps.InfoWindow({
+                    position: mapsMouseEvent.latLng,
+                });
+
+                infoWindow.setContent(
+                    JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2)
+                );
+
+                infoWindow.open(map);
+                var Latitud = mapsMouseEvent.latLng.lat();
+                var Longitud = mapsMouseEvent.latLng.lng();
+
+                $("#TxtLatitud").val(Latitud);
+                $("#TxtLongitud").val(Longitud);
+            });
+            
+        };
+
+    </script>
+
+}
+
