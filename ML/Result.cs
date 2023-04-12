@@ -10,5 +10,7 @@
         //Para Objetos
         public object Object { get; set; }
         public List<object> Objects { get; set; }
+
+        public int[] Arreglo { get; set; }
     }
 }

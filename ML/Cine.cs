@@ -13,7 +13,7 @@ namespace ML
         public decimal Longitud { get; set;}
         public string Descripcion { get; set; }
         public decimal Venta { get; set; }
-        public string Zona { get; set; }
+        public ML.Zona Zona { get; set; }
 
         public List<object> Cines { get; set; }
     }

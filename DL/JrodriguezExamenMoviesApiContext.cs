@@ -19,6 +19,8 @@ public partial class JrodriguezExamenMoviesApiContext : DbContext
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
+    public virtual DbSet<Zona> Zonas { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=.; Database= JRodriguezExamenMoviesApi; User ID=sa; TrustServerCertificate=True; Password=pass@word1;");
@@ -37,9 +39,10 @@ public partial class JrodriguezExamenMoviesApiContext : DbContext
             entity.Property(e => e.Latitud).HasColumnType("decimal(18, 0)");
             entity.Property(e => e.Longitud).HasColumnType("decimal(18, 0)");
             entity.Property(e => e.Venta).HasColumnType("decimal(18, 0)");
-            entity.Property(e => e.Zona)
-                .HasMaxLength(50)
-                .IsUnicode(false);
+
+            entity.HasOne(d => d.ZonaNavigation).WithMany(p => p.Cines)
+                .HasForeignKey(d => d.Zona)
+                .HasConstraintName("FK__Cine__Zona__1BFD2C07");
         });
 
         modelBuilder.Entity<Usuario>(entity =>
@@ -53,6 +56,17 @@ public partial class JrodriguezExamenMoviesApiContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.UserName)
                 .HasMaxLength(20)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<Zona>(entity =>
+        {
+            entity.HasKey(e => e.IdZona).HasName("PK__Zona__F631C12D424A32A9");
+
+            entity.ToTable("Zona");
+
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(50)
                 .IsUnicode(false);
         });
 

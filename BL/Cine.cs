@@ -17,7 +17,7 @@ namespace BL
             {
                 using (DL.JrodriguezExamenMoviesApiContext contex = new DL.JrodriguezExamenMoviesApiContext())
                 {
-                    var query = contex.Database.ExecuteSqlRaw($"[CineAdd] {cine.Latitud}, {cine.Longitud},'{cine.Descripcion}',{cine.Venta},'{cine.Zona}'");
+                    var query = contex.Database.ExecuteSqlRaw($"[CineAdd] {cine.Latitud}, {cine.Longitud},'{cine.Descripcion}',{cine.Venta},{cine.Zona.IdZona}");
 
                     if (query > 0)
                     {
@@ -30,7 +30,66 @@ namespace BL
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
+            {
+                result.Ex = ex;
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+
+        public static ML.Result Update(ML.Cine cine)
+        {
+            ML.Result result = new ML.Result();
+
+            try
+            {
+                using (DL.JrodriguezExamenMoviesApiContext contex = new DL.JrodriguezExamenMoviesApiContext())
+                {
+                    var query = contex.Database.ExecuteSqlRaw($"[CineUpdate] {cine.IdCine}, {cine.Latitud}, {cine.Longitud},'{cine.Descripcion}',{cine.Venta}, {cine.Zona.IdZona}");
+
+                    if (query > 0)
+                    {
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Ex = ex;
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+
+        public static ML.Result Delete(int IdCine)
+        {
+            ML.Result result = new ML.Result();
+
+            try
+            {
+                using (DL.JrodriguezExamenMoviesApiContext contex = new DL.JrodriguezExamenMoviesApiContext())
+                {
+                    var query = contex.Database.ExecuteSqlRaw($"[CineDelete] {IdCine}");
+
+                    if (query > 0)
+                    {
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                    }
+                }
+
+            }
+            catch (Exception ex)
             {
                 result.Ex = ex;
                 result.Correct = false;
@@ -58,13 +117,53 @@ namespace BL
                         cine.Longitud = item.Longitud.Value;
                         cine.Descripcion = item.Descripcion;
                         cine.Venta = item.Venta.Value;
-                        cine.Zona = item.Zona;
+
+                        cine.Zona = new ML.Zona();
+                        cine.Zona.IdZona = item.Zona.Value;
+                        cine.Zona.Descripcion = item.NombreZona;
+                        
 
                         result.Objects.Add(cine);
                     }
                     result.Correct = true;
                 }
 
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.Ex = ex;
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+
+        public static ML.Result GetById(int IdCine)
+        {
+            ML.Result result = new ML.Result();
+
+            try
+            {
+                using (DL.JrodriguezExamenMoviesApiContext contex = new DL.JrodriguezExamenMoviesApiContext())
+                {
+                    var query = contex.Cines.FromSqlRaw($"[CineGetById] {IdCine}").AsEnumerable().FirstOrDefault();
+
+                    ML.Cine cine = new ML.Cine();
+
+                    cine.IdCine = query.IdCines;
+                    cine.Latitud = query.Latitud.Value;
+                    cine.Longitud = query.Longitud.Value;
+                    cine.Descripcion = query.Descripcion;
+                    cine.Venta = query.Venta.Value;
+
+                    cine.Zona = new ML.Zona();
+                    cine.Zona.IdZona = query.Zona.Value;
+                    cine.Zona.Descripcion = query.NombreZona;
+
+                    result.Object = cine;
+
+                    result.Correct = true;
+                }
             }
             catch (Exception ex)
             {

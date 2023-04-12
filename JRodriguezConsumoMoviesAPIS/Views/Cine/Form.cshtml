@@ -31,7 +31,7 @@
             </div>
         </div>
 
-        <div class="col-md-7">
+        <div class="col-md-5">
             @Html.LabelFor(model => model.Descripcion, "Direccion:")
             <div class="input-group mb-2">
                 <span class="input-group-text"><i class="bi bi-controller"></i></span>
@@ -47,14 +47,15 @@
             </div>
         </div>
 
-        <div class="col-md-2">
-            @Html.LabelFor(model => model.Zona, "Zona: ")
-            <div class="input-group mb-2">
-                <span class="input-group-text"><i class="bi bi-controller"></i></span>
-                @Html.TextBoxFor(model => model.Zona, new { @class = "form-control"})
+        <div class="form-group">
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.Zona)
+                @Html.DropDownListFor(model => model.Zona.IdZona, new SelectList(Model.Zona.Zonas, "IdZona", "Descripcion"), "Seleccione la Zona", new { @class = "form-control", @id = "ddlArea" })
             </div>
         </div>
+
     </div>
+    <br />
 
     <div class="col-md-3">
         <div id="Map"></div>
@@ -92,7 +93,7 @@
                 myLatlng = {lat: 19.5538408, lng: -99.2748958 };
             }
             else{
-                myLatlng = { lat: parseDecimal($("#TxtLatitud").val()), lng: parseDecimal($("#TxtLongitud").val()) } 
+                myLatlng = { lat: parseFloat($("#TxtLatitud").val()), lng: parseFloat($("#TxtLongitud").val()) } 
             }
 
             const map = new google.maps.Map(document.getElementById("Map"), {
