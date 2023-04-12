@@ -15,6 +15,7 @@ namespace ML
         public decimal Venta { get; set; }
         public ML.Zona Zona { get; set; }
 
+        public int[] Porcentajes { get; set; }
         public List<object> Cines { get; set; }
     }
 }

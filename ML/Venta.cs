@@ -8,9 +8,8 @@ namespace ML
 {
     public class Venta
     {
-        public int TotalVentas { get; set; }
-        public int Zona { get; set; }
         public decimal Porcentaje { get; set; }
+        public int[] Porcentajes { get; set; }
         public List<object> Ventas { get; set; }
 
     }

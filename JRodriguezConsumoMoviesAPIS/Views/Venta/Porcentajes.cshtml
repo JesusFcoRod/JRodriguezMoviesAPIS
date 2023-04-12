@@ -1,0 +1,113 @@
+﻿@model ML.Cine
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ESTADISTICAS</title>
+</head>
+
+<body>
+
+    <style>
+        #map {
+            height: 350px;
+            width: 50%;
+        }
+    </style>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div id="chartContainer" @*style="height: 400px; width: 50%;*@"></div>
+        </div>
+        <div class="col-md-6">
+            <h1 class="text-center" style="text-shadow: 0 0 4px #4800ff;"> Puntos de venta</h1>
+            <div id="map" style="@*position: absolute;*@ width: 500px; height: 350px; border: 3px solid green; left: 100px;"></div>
+        </div>
+    </div>
+
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSKBDdPPlfca_zTwyxKiicRQn1qfgRjLw&callback=initMap&libraries=&v=weekly&sensor=false" defer></script>
+    <script type="text/javascript">
+
+        window.onload = function () {
+            var chart = new CanvasJS.Chart("chartContainer", {
+                title: {
+                    text: "Total de Ventas por zona"
+                },
+                subtitles: [{
+                    text: "Periodo 2022"
+                }],
+                animationEnabled: true,
+                data: [
+                    {
+                        type: "pie",
+                        startAngle: 40,
+                        toolTipContent: "<b>{label}</b>: {y}%",
+                        showInLegend: "true",
+                        legendText: "{label}",
+                        indexLabelFontSize: 16,
+                        indexLabel: "{label} - {y}%",
+                        dataPoints: [
+                            { y: @Model.Porcentajes[0], label: "Zona Norte" },
+                            { y: @Model.Porcentajes[1], label: "Zona Sur" },
+                            { y: @Model.Porcentajes[2], label: "Zona Este" },
+                            { y: @Model.Porcentajes[3], label: "Zona Oeste" }
+                        ]
+                    }
+                ]
+            });
+            chart.render();
+        }
+
+        function initMap() {
+
+            if ($("#TxtLatitud").val() == 0 && $("#TxtLongitud").val() == 0) {
+                myLatlng = { lat: 19.59761, lng: -99.18054 };
+            } else {
+                myLatlng = { lat: 19.59761, lng: -99.18054 };
+            }
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 11,
+                center: myLatlng,
+            });
+                    @foreach (ML.Cine cine in Model.Cines)
+                    {
+                        <text>
+                                    var contentString = '<div id="content">' +
+                    '<div id="siteNotice">' +
+                    '</div>' +
+                    'Direccion: ' + '@cine.Descripcion' +
+                    '<div id="bodyContent">' +
+                    'Ventas:' + '@cine.Venta' + "<br>" +
+                    'Zona:' + '@cine.Zona.Descripcion' + "<br>" +
+                    'ID:' + '@cine.IdCine' + "<br>" +
+                    '</div>' +
+                    '</div>';
+                var marker_@cine.IdCine = new google.maps.Marker({ position: { lat: @cine.Latitud, lng: @cine.Longitud }, map: map });
+                (marker_@cine.IdCine).addListener("click", function () {
+                    (infoWindow_@cine.IdCine).open(map, marker_@cine.IdCine);
+            });
+            var infoWindow_@cine.IdCine = new google.maps.InfoWindow({
+                content: contentString,
+                ariaLabel: "Punto de Venta",
+            });
+                        </text>
+                    }
+
+
+                }
+        window.initMap = initMap;
+
+
+
+
+
+    </script>
+
+</body>
+</html>
+
+
+

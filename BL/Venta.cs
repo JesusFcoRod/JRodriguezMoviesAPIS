@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ML;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,35 +51,41 @@ namespace BL
 
         public static int TotalPorZona(int IdZona)
         {
-            int TotalZona = 0;
+           ML.Cine cine = new ML.Cine();
+            int TotalVentas = 0;
             try
             {
                 using (DL.JrodriguezExamenMoviesApiContext context = new DL.JrodriguezExamenMoviesApiContext())
                 {
-                    var query = context.Cines.FromSqlRaw($"[CineGetByZona] {IdZona}").ToList();
+                    var query = context.Cines.FromSqlRaw($"[VentasPorZona] {IdZona}").ToList();
+
                     int TamList = query.Count();
-                    int[] VentasZona = new int[TamList];
+                    int[] Ventas = new int[TamList];
 
-                    foreach (var item in query)
+                    if (query != null)
                     {
-                        ML.Cine cine = new ML.Cine();
-                        cine.Zona = new ML.Zona();
-                        cine.Zona.IdZona = item.Zona.Value;
-                        cine.Zona.Descripcion = item.Descripcion;
+                        foreach (var item in query)
+                        {
+                            Ventas[TamList - 1] = int.Parse(item.Venta.Value.ToString());
+                            TamList--;
 
-                        VentasZona[TamList - 1] = int.Parse(cine.Venta.ToString());
-                        TamList--;
-
-                    }
-                    TotalZona = VentasZona.Sum();
+                        }
+                        TotalVentas = Ventas.Sum();
+                    }                   
                 }
 
             }
             catch (Exception Ex)
             {
-                return 0;
+                return TotalVentas;
             }
-            return TotalZona;
+            return TotalVentas;
+        }
+
+        public static int PorcentajeZona(int VentaZona, int TotalVentas)
+        {
+            int Porcentaje = (VentaZona * 100) / TotalVentas;
+            return Porcentaje;
         }
     }
 }
